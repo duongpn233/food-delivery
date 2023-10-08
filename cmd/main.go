@@ -4,9 +4,12 @@ import (
 	"log"
 	"os"
 
+	"fooddelivery/config"
 	middleware "fooddelivery/middleware"
 	restaurantgin "fooddelivery/module/restaurant/transport/gin"
 	appctx "fooddelivery/pkg/appctx"
+
+	"flag"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
@@ -14,7 +17,20 @@ import (
 )
 
 func main() {
-	dsn := os.Getenv("MYSQL_CONN_STRING")
+	var pathConfig string
+	flag.StringVar(&pathConfig, "c", "config/config.toml", "config file")
+
+	conf, err := config.LoadConfig(pathConfig)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	dsn := conf.GetSqlConnection()
+	if dsn == "" {
+		dsn = os.Getenv("MYSQL_CONN_STRING")
+	}
+
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)

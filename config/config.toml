@@ -1,0 +1,2 @@
+[mysql]
+sqlconnection = "root:password@tcp(test-mysql:3306)/food-delivery?charset=utf8mb4&parseTime=True"

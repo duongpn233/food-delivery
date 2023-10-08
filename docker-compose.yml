@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  mysql:
+    image: mysql
+    container_name: test-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: food-delivery
+      MYSQL_USER: test-user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3305:3306"
+    networks:
+      - test-docker
+    volumes:
+      - /home/infra-duongpn21/workspace/db/mysql:/var/lib/mysql
+    command: --bind-address=0.0.0.0
+  redis:
+    image: redis
+    container_name: test-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - test-docker
+  go-service:
+    image: go-food-delivery
+    container_name: food-delivery
+    ports:
+      - "8080:8080"
+    networks:
+      - test-docker
+    depends_on:
+      - mysql
+
+networks:
+  test-docker:
+    driver: bridge
